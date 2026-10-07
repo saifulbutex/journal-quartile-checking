@@ -1,5 +1,4 @@
-import os
-import re
-import pandas as pd
-import requests
-from google.colab import files
+streamlit>=1.25.0
+pandas>=2.0.0
+requests>=2.28.0
+openpyxl>=3.1.0
