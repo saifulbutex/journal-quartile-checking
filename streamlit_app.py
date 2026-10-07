@@ -21,9 +21,9 @@ st.title("📚 Journal Metrics & Quartile Lookup Tool")
 st.write("Lookup SCImago Quartiles (Q1–Q4), SJR Scores, and 2-Year Impact Factor equivalents by Journal Name, ISSN, or reference files (`.ris`, `.bib`, `.xlsx`, `.csv`).")
 
 # ---------------------------------------------------------
-# CACHED DATA LOADERS & HELPERS
+# GITHUB DATASET PATH
 # ---------------------------------------------------------
-SCIMAGO_FILE = "scimago_data.csv"
+GITHUB_RAW_URL = "https://raw.githubusercontent.com/saifulbutex/journal-quartile-checking/main/scimagojr%202025.csv"
 
 def parse_issns(issn_str):
     if pd.isna(issn_str):
@@ -49,28 +49,16 @@ def standardize_scimago_columns(df):
         return df.rename(columns=rename_dict)
     return None
 
-@st.cache_data(show_spinner="Loading SCImago Dataset...")
+@st.cache_data(show_spinner="Loading SCImago 2025 Dataset from GitHub...")
 def load_scimago_database():
-    if not os.path.exists(SCIMAGO_FILE):
-        try:
-            scimago_url = "https://www.scimagojr.com/journalrank.php?out=xls"
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
-            }
-            response = requests.get(scimago_url, headers=headers, timeout=15)
-            response.raise_for_status()
-            with open(SCIMAGO_FILE, 'wb') as f:
-                f.write(response.content)
-        except Exception as e:
-            st.error(f"Failed to download SCImago data automatically: {e}")
-            return None, {}, {}
-
     try:
-        df_scimago = pd.read_csv(SCIMAGO_FILE, sep=";")
+        # Load directly from GitHub Raw URL
+        df_scimago = pd.read_csv(GITHUB_RAW_URL, sep=";")
     except Exception:
         try:
-            df_scimago = pd.read_csv(SCIMAGO_FILE, sep=";", encoding="latin-1")
-        except Exception:
+            df_scimago = pd.read_csv(GITHUB_RAW_URL, sep=";", encoding="latin-1")
+        except Exception as e:
+            st.error(f"Failed to load dataset from GitHub repository: {e}")
             return None, {}, {}
 
     df_scimago = standardize_scimago_columns(df_scimago)
@@ -221,7 +209,7 @@ def generate_styled_excel(df):
 df_scimago, journal_map, issn_map = load_scimago_database()
 
 if df_scimago is None:
-    st.error("SCImago database could not be loaded. Please check your internet connection or upload the file manually.")
+    st.error("SCImago database could not be loaded. Please check your GitHub repository file path.")
 else:
     st.sidebar.header("Navigation")
     option = st.sidebar.radio("Choose Mode:", ["Single Journal Search", "Batch Citation Lookup"])
@@ -264,7 +252,6 @@ else:
             if not df_user.empty:
                 st.write(f"**Loaded {len(df_user)} records from `{filename}`**")
                 
-                # Column selector if standard JournalName column isn't present
                 target_col = "JournalName"
                 if target_col not in df_user.columns:
                     target_col = st.selectbox("Select the column containing Journal Names or ISSNs:", df_user.columns)
