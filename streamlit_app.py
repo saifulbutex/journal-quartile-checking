@@ -17,7 +17,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("📚 Journal Metrics & Quartile Lookup (Till 8 October, 2026")
+st.title("📚 Journal Metrics & Quartile Lookup (Till 8 October, 2026)")
 st.write("Lookup SCImago Quartiles (Q1–Q4), SJR Scores, and 2-Year Impact Factor equivalents by Journal Name, ISSN, or reference files (`.ris`, `.bib`, `.xlsx`, `.csv`).")
 
 # ---------------------------------------------------------
