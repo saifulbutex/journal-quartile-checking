@@ -2,8 +2,7 @@
 
 Automated Google Colab tool to look up SCImago Journal Quartiles (Q1–Q4), SJR Scores, and 2-Year Impact Factor equivalents from journal names, ISSNs, or citation files (`.ris` / `.bib`).
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/saifulbutex/journal-quartile-checking
-/blob/main/Quartile_checking.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/saifulbutex/journal-quartile-checking/blob/main/Quartile_checking.ipynb)
 
 ---
 
